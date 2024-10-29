@@ -1,0 +1,6 @@
+output/
+input/
+md-html/
+*.html
+*.log
+*.pyc

@@ -1,0 +1,196 @@
+
+    body {
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        line-height: 1.6;
+        font-family: Consolas, "Liberation Mono", Monaco, "Courier New", monospace;
+        background-color: #161616; /* Dark bg */
+        color: #f4eee8; /* Text color */
+        display: flex;
+        justify-content: center;
+    }
+    .container {
+        max-width: 800px;
+        width: 100%;
+        padding: 40px;
+        background-color: #1E1E1E;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    }
+    a {
+        color: #e6d5a7; /* Link color */
+        text-decoration: none;
+    }
+    a:hover {
+        color: #f0e3c0; /* Link hover color */
+        text-decoration: underline;
+    }
+    h1 {
+        margin: 0.2em 0 0.1em 0;
+    }
+    h2, h3, h4, h5, h6 {
+        color: #f0e3c0;
+        margin: 0.01em 0 0.03em 0;  /* Very compact spacing */
+        font-family: Consolas, monospace;
+        letter-spacing: 0.5px;
+    }
+    ul {
+        padding-left: 20px;
+        margin-top: 0.05em;    /* Added to reduce space after headings when followed by lists */
+        margin-bottom: 0.5em;
+    }
+    p {
+        margin-top: 0.05em;
+    }
+    li {
+        margin-bottom: 0.5em;
+    }
+    pre, code {
+        font-family: Consolas, monospace;
+        background-color: #161616; /* code bg */
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    b, strong {
+        color: #BD4848; /* Color for bold text */
+    }
+    i, em {
+        color: #D8BA6D; /* Color for italic text */
+    }
+    .table-bordered {
+        empty-cells: show;
+        border-collapse: collapse;
+        width: 75%;
+    }
+    .table-bordered th, .table-bordered td {
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    .page-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .page-card {
+        background-color: rgba(40, 40, 40, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .page-card:hover {
+        background-color: rgba(50, 50, 50, 0.8);
+    }
+    .page-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .date {
+        font-size: 0.9em;
+        color: #888;
+    }
+    .tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .tag {
+        background-color: #965858;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.8em;
+    }
+
+    input {
+        padding: 10px;                      /* Space inside the input field */
+        width: 100%;                        /* Full width */
+        max-width: 400px;                  /* Maximum width */
+        border: 0px solid #965858;            /* Border style */
+        border-radius: 4px;                /* Rounded corners */
+        font-size: 12px;                   /* Font size */
+        background-color: #161616;        /* Change background color */
+        transition: border-color 0.3s;     /* Smooth transition for border color */
+        color: #f4eee8; /* Text color */
+    }
+
+    input:focus {
+        outline: none;                      /* Remove default outline */
+        border-color: #D8BA6D;             /* Change border color on focus */
+    }
+
+    /* Base admonition styling */
+    .admonition {
+        border-left: 4px solid #bbb;
+        padding: 10px 15px;
+        margin: 10px 0;
+        border-radius: 6px;
+        background-color: #2e2e2e;
+        color: #e0e0e0;
+        font-family: "Consolas", monospace;
+    }
+
+    /* Warning admonition styling */
+    .admonition.warning {
+        border-left-color: #ff6b6b;
+        background-color: #402c2c;
+        color: #ffeaea;
+    }
+
+    .admonition.warning .admonition-title {
+        color: #ff9b9b;
+    }
+
+    /* Question admonition styling */
+    .admonition.question {
+        border-left-color: #6baaff;
+        background-color: #2c3b40;
+        color: #d2e8ff;
+    }
+
+    .admonition.question .admonition-title {
+        color: #a3d7ff;
+    }
+
+    /* Callout admonition styling */
+    .admonition.callout {
+        border-left-color: #ffcc6b;
+        background-color: #40392c;
+        color: #ffe8d2;
+    }
+
+    .admonition.callout .admonition-title {
+        color: #ffd3a3;
+    }
+
+    /* Quote admonition styling */
+    .admonition.quote {
+        border-left-color: #a6a6a6;
+        background-color: #3b3b3b;
+        color: #d6d6d6;
+        font-style: italic;
+    }
+
+    .admonition.quote .admonition-title {
+        color: #c6c6c6;
+    }
+
+    /* Title styling */
+    .admonition-title {
+        font-size: 1em; /* Slightly smaller title */
+        margin-bottom: 5px;
+        letter-spacing: 0.05em;
+        font-weight: bold;
+    }
+
+    .admonition p {
+        margin: 0;
+        line-height: 1.5;
+    }
+    
