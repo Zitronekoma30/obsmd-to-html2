@@ -14,9 +14,7 @@
         max-width: 800px;
         width: 100%;
         padding: 40px;
-        background-color: #1E1E1E;
         border-radius: 8px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
     }
     a {
         color: #e6d5a7; /* Link color */
@@ -48,7 +46,7 @@
     }
     pre, code {
         font-family: Consolas, monospace;
-        background-color: #161616; /* code bg */
+        background-color: #1E1E1E; /* code bg */
         overflow-x: auto;
         font-size: 14px;
         line-height: 1.4;
