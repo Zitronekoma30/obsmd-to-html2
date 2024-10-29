@@ -11,7 +11,7 @@ def add_styling(html_content, config):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{config["content"]["title"]}</title>
-    <link href="styles/monokai.css" rel="stylesheet">
+    <link href="styles/github.css" rel="stylesheet">
     <link href="styles/opa.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
@@ -219,6 +219,10 @@ def generate_opa_css(config):
     }}
     p {{
         margin-top: 0.05em;
+    }}
+    img {{
+        max-width: 100%;
+        height: auto;
     }}
     li {{
         margin-bottom: 0.5em;
