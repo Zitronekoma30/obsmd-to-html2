@@ -184,8 +184,8 @@ def generate_opa_css(config):
         min-height: 100vh;
         line-height: 1.6;
         font-family: Consolas, "Liberation Mono", Monaco, "Courier New", monospace;
-        background-color: {config["style"]["dark_bg"]}; /* Dark bg */
-        color: {config["style"]["text"]}; /* Text color */
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.87), {config["style"]["dark_bg"]} 10%, {config["style"]["dark_bg"]} 90%, rgba(0, 0, 0, 0.87));
+        color: {config["style"]["text"]};
         display: flex;
         justify-content: center;
     }}
