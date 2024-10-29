@@ -193,9 +193,7 @@ def generate_opa_css(config):
         max-width: 800px;
         width: 100%;
         padding: 40px;
-        background-color: {config["style"]["content_bg"]};
         border-radius: 8px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
     }}
     a {{
         color: {config["style"]["link"]}; /* Link color */
