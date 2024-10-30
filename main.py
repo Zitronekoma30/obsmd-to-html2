@@ -229,6 +229,7 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output directory for html files")
     parser.add_argument("ip", help="IP address to serve the html files on", default="localhost")
     parser.add_argument("port", type=int, help="Port to serve the html files on", default=80)
+    # TODO: add argument for config file and add pw to config
     args = parser.parse_args()
     
     md_path = args.md
@@ -238,7 +239,7 @@ if __name__ == "__main__":
     outpt_pth = output_path
 
     # load password for rebuild pages
-    with open("password.txt", "r") as f:
+    with open("./password.txt", "r") as f:
         request_passwd = f.read().strip()
 
     # convert md files to html
