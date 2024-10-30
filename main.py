@@ -15,6 +15,7 @@ import logging
 # workaround global variables for HTTPRequestHandler
 inpt_pth = ""
 outpt_pth = ""
+request_passwd = ""
 
 class GracefulServer:
     def __init__(self, output_path: str, md_path: str, file_ids: Dict, 
@@ -149,7 +150,7 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
         super().end_headers()
     
     def do_GET(self):
-        if self.path == "/rebuild-pages":
+        if self.path == f"/rebuild-pages-pw:{request_passwd}":
             convert_all_md_files(outpt_pth, inpt_pth)
             self.send_response(200)
             self.end_headers()
@@ -235,6 +236,10 @@ if __name__ == "__main__":
 
     inpt_pth = md_path
     outpt_pth = output_path
+
+    # load password for rebuild pages
+    with open("password.txt", "r") as f:
+        request_passwd = f.read().strip()
 
     # convert md files to html
     ids = convert_all_md_files(output_path, md_path)
