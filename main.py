@@ -11,6 +11,11 @@ import sys
 from typing import Dict, Optional
 import logging
 
+
+# workaround global variables for HTTPRequestHandler
+inpt_pth = ""
+outpt_pth = ""
+
 class GracefulServer:
     def __init__(self, output_path: str, md_path: str, file_ids: Dict, 
                  ip: str = "localhost", port: int = 80):
@@ -98,6 +103,7 @@ class GracefulServer:
                     logging.info("Server health check - Running")
                     last_health_check = current_time
                 
+                # Check for changes in md files
                 if check_for_changes(self.md_path, self.file_ids):
                     logging.info("Changes detected, rebuilding html files")
                     self.file_ids = convert_all_md_files(self.output_path, 
@@ -141,6 +147,15 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Content-Type', 'text/html; charset=utf-8')
         super().end_headers()
+    
+    def do_GET(self):
+        if self.path == "/rebuild-pages":
+            convert_all_md_files(outpt_pth, inpt_pth)
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Pages rebuilt")
+        else:
+            super().do_GET()  
 
 def serve_output_html(output_path, md_path, file_ids, ip="localhost", port=80):
     server = GracefulServer(output_path, md_path, file_ids, ip, port)
@@ -152,7 +167,10 @@ def generate_dynamic_id(file_path):
     hash_input = f"{file_path}-{mtime}".encode('utf-8')
     return hashlib.md5(hash_input).hexdigest()
 
-def convert_all_md_files(output_path, md_path):
+def convert_all_md_files(output_path, input_path):
+    print("Converting all md files to html")
+    print("Input path:", input_path)
+    print("Output path:", output_path)
     # remove all files in output path
     for root, _, files in os.walk(output_path, topdown=False):
         for file in files:
@@ -163,10 +181,10 @@ def convert_all_md_files(output_path, md_path):
     # Convert all md files to html
     file_dynamic_ids = {}
     pages = []
-    for root, _, files in os.walk(md_path):
+    for root, _, files in os.walk(input_path):
         for file in files:
             if file.endswith(".md"):
-                full_path_to_file = md_path + os.sep + file
+                full_path_to_file = input_path + os.sep + file
                 print("Converting", full_path_to_file)
                 html_file_name, tags = md_html.md_to_html(full_path_to_file, output_path)
                 md_file_creation_time = os.path.getctime(full_path_to_file)
@@ -186,11 +204,17 @@ def convert_all_md_files(output_path, md_path):
         shutil.copy(icon_path, output_path)
 
     # copy all images to output path
-    for root, _, files in os.walk(md_path):
+    for root, _, files in os.walk(input_path):
         for file in files:
             if file.endswith(".png") or file.endswith(".jpg") or file.endswith(".jpeg"):
-                full_path_to_file = md_path + os.sep + file
+                full_path_to_file = input_path + os.sep + file
                 shutil.copy(full_path_to_file, output_path)
+
+    # copy input_path/pages folder to output_path/pages
+    pages_path = os.path.join(output_path, "pages")
+    if os.path.exists(pages_path):
+        shutil.rmtree(pages_path)
+    shutil.copytree(os.path.join(input_path, "pages"), pages_path)
 
     # add style files
     md_html.copy_style_files(output_path)
@@ -208,6 +232,9 @@ if __name__ == "__main__":
     
     md_path = args.md
     output_path = args.output
+
+    inpt_pth = md_path
+    outpt_pth = output_path
 
     # convert md files to html
     ids = convert_all_md_files(output_path, md_path)
