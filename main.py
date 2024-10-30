@@ -10,18 +10,23 @@ import signal
 import sys
 from typing import Dict, Optional
 import logging
+import configparser
+
 
 
 # workaround global variables for HTTPRequestHandler
 inpt_pth = ""
 outpt_pth = ""
+config_pth = ""
+
 request_passwd = ""
 
 class GracefulServer:
-    def __init__(self, output_path: str, md_path: str, file_ids: Dict, 
+    def __init__(self, output_path: str, md_path: str, config_path:str, file_ids: Dict, 
                  ip: str = "localhost", port: int = 80):
         self.output_path = output_path
         self.md_path = md_path
+        self.config_path = config_path
         self.file_ids = file_ids
         self.ip = ip
         self.port = port
@@ -108,7 +113,7 @@ class GracefulServer:
                 if check_for_changes(self.md_path, self.file_ids):
                     logging.info("Changes detected, rebuilding html files")
                     self.file_ids = convert_all_md_files(self.output_path, 
-                                                       self.md_path)
+                                                       self.md_path, self.config_path)
                 
                 # Verify request thread is still alive
                 if not self.request_thread.is_alive():
@@ -151,15 +156,15 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
     
     def do_GET(self):
         if self.path == f"/rebuild-pages-pw:{request_passwd}":
-            convert_all_md_files(outpt_pth, inpt_pth)
+            convert_all_md_files(outpt_pth, inpt_pth, config_pth)
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"Pages rebuilt")
         else:
             super().do_GET()  
 
-def serve_output_html(output_path, md_path, file_ids, ip="localhost", port=80):
-    server = GracefulServer(output_path, md_path, file_ids, ip, port)
+def serve_output_html(output_path, md_path, file_ids, ip="localhost", port=80, config_path=None):
+    server = GracefulServer(output_path, md_path, config_path, file_ids, ip, port)
     server.run()
 
 
@@ -168,7 +173,7 @@ def generate_dynamic_id(file_path):
     hash_input = f"{file_path}-{mtime}".encode('utf-8')
     return hashlib.md5(hash_input).hexdigest()
 
-def convert_all_md_files(output_path, input_path):
+def convert_all_md_files(output_path, input_path, config_path=None):
     print("Converting all md files to html")
     print("Input path:", input_path)
     print("Output path:", output_path)
@@ -187,17 +192,20 @@ def convert_all_md_files(output_path, input_path):
             if file.endswith(".md"):
                 full_path_to_file = input_path + os.sep + file
                 print("Converting", full_path_to_file)
-                html_file_name, tags = md_html.md_to_html(full_path_to_file, output_path)
+                
+                html_file_name, tags = md_html.md_to_html(full_path_to_file, output_path, config_path)
+
                 md_file_creation_time = os.path.getctime(full_path_to_file)
                 md_file_creation_date = time.strftime('%d.%m.%Y', time.localtime(md_file_creation_time))
                 pages.append({"name": html_file_name, "tags": tags, "date": md_file_creation_date, "time": md_file_creation_time})
+                
                 file_dynamic_ids[file] = generate_dynamic_id(full_path_to_file)
 
     # sort pages by most recent date
     pages.sort(key=lambda x: x["time"], reverse=True)
 
     # generate home page
-    md_html.generate_home_page(pages, output_path)
+    md_html.generate_home_page(pages, output_path, config_path)
 
     # copy icon.png to output path
     icon_path = os.path.join(os.path.dirname(__file__), "icon.png")
@@ -229,21 +237,28 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output directory for html files")
     parser.add_argument("ip", help="IP address to serve the html files on", default="localhost")
     parser.add_argument("port", type=int, help="Port to serve the html files on", default=80)
-    # TODO: add argument for config file and add pw to config
+    # TODO: add optional argument for config file and add pw to config
+    parser.add_argument("--config", help="Config file for html conversion and security")
     args = parser.parse_args()
     
     md_path = args.md
     output_path = args.output
+    config_path = args.config
 
     inpt_pth = md_path
     outpt_pth = output_path
+    config_pth = config_path
 
-    # load password for rebuild pages
-    with open("./password.txt", "r") as f:
-        request_passwd = f.read().strip()
+    # load password from security section of config file
+    if config_path:
+        config = configparser.ConfigParser()
+        config.read(config_path)
+        request_passwd = config["security"]["password"]
+    else:
+        request_passwd = "password"
 
     # convert md files to html
-    ids = convert_all_md_files(output_path, md_path)
+    ids = convert_all_md_files(output_path, md_path, config_path)
 
     # serve html files
-    serve_output_html(output_path, md_path, ids, args.ip, args.port)
+    serve_output_html(output_path, md_path, ids, args.ip, args.port, config_path)
