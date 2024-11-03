@@ -13,7 +13,7 @@ import logging
 import configparser
 import json
 import cgi
-
+import yagmail
 
 
 # workaround global variables for HTTPRequestHandler
@@ -169,6 +169,30 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"Pages rebuilt")
+        if self.path == f"/list-bookings-pw:{request_passwd}":
+            booking_file_path = os.path.join(os.path.dirname(outpt_pth), "booking_requests.txt")
+            if os.path.exists(booking_file_path):
+                with open(booking_file_path, "r") as f:
+                    bookings = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(bytes(bookings, 'utf-8'))
+            else:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"No booking requests found")
+        if self.path == f"/flush-bookings-pw:{request_passwd}":
+            booking_file_path = os.path.join(os.path.dirname(outpt_pth), "booking_requests.txt")
+            if os.path.exists(booking_file_path):
+                os.remove(booking_file_path)
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"Booking requests flushed")
+            else:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"No booking requests found")
         else:
             super().do_GET()  
     
@@ -187,6 +211,11 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
                 
                 # Process the form data as needed
                 print(f"Received booking request from {name} ({email}) for dates {dates} with {guests} guests.")
+
+                # store booking request in a file one level above the output path
+                booking_file_path = os.path.join(os.path.dirname(outpt_pth), "booking_requests.txt")
+                with open(booking_file_path, "a") as f:
+                    f.write(f"Name: {name}, Email: {email}, Dates: {dates}, Guests: {guests}\n")
                 
                 # Send a JSON response
                 self.send_response(200)
