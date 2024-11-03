@@ -11,6 +11,7 @@ import sys
 from typing import Dict, Optional
 import logging
 import configparser
+import urllib
 
 
 
@@ -150,14 +151,6 @@ def check_for_changes(md_path, file_ids):
     return False
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
-    def end_headers(self):
-        # Check the file extension and set Content-Type accordingly
-        if self.path.endswith(".css"):
-            self.send_header("Content-Type", "text/css; charset=utf-8")
-        else:
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-        super().end_headers()
-    
     def do_GET(self):
         if self.path == f"/rebuild-pages-pw:{request_passwd}":
             convert_all_md_files(outpt_pth, inpt_pth, config_pth)
