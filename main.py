@@ -168,6 +168,7 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"Pages rebuilt")
+            return
         if self.path == f"/list-bookings-pw:{request_passwd}":
             booking_file_path = os.path.join(os.path.dirname(outpt_pth), "booking_requests.txt")
             if os.path.exists(booking_file_path):
@@ -181,6 +182,7 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
                 self.send_response(404)
                 self.end_headers()
                 self.wfile.write(b"No booking requests found")
+            return
         if self.path == f"/flush-bookings-pw:{request_passwd}":
             booking_file_path = os.path.join(os.path.dirname(outpt_pth), "booking_requests.txt")
             if os.path.exists(booking_file_path):
@@ -192,6 +194,7 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
                 self.send_response(404)
                 self.end_headers()
                 self.wfile.write(b"No booking requests found")
+            return
         else:
             super().do_GET()  
     
