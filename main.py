@@ -151,7 +151,11 @@ def check_for_changes(md_path, file_ids):
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
-        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        # Check the file extension and set Content-Type accordingly
+        if self.path.endswith(".css"):
+            self.send_header("Content-Type", "text/css; charset=utf-8")
+        else:
+            self.send_header("Content-Type", "text/html; charset=utf-8")
         super().end_headers()
     
     def do_GET(self):
