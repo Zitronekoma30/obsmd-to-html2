@@ -221,9 +221,15 @@ def convert_all_md_files(output_path, input_path, config_path=None):
 
     # copy input_path/pages folder to output_path/pages
     pages_path = os.path.join(output_path, "pages")
+    src_pages_path = os.path.join(input_path, "pages")
     if os.path.exists(pages_path):
         shutil.rmtree(pages_path)
-    shutil.copytree(os.path.join(input_path, "pages"), pages_path)
+    if os.path.exists(src_pages_path):
+        shutil.copytree(src_pages_path, pages_path)
+        print(f"Copied pages folder from {src_pages_path} to {pages_path}")
+    else:
+        print(f"Source pages folder {src_pages_path} does not exist")
+
 
     # add style files
     md_html.copy_style_files(output_path)
