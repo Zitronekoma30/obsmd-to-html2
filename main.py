@@ -214,10 +214,11 @@ def convert_all_md_files(output_path, input_path, config_path=None):
 
     # copy all images to output path
     for root, _, files in os.walk(input_path):
-        for file in files:
-            if file.endswith(".png") or file.endswith(".jpg") or file.endswith(".jpeg"):
-                full_path_to_file = input_path + os.sep + file
-                shutil.copy(full_path_to_file, output_path)
+        if root == input_path:  # Only process files in the root directory
+            for file in files:
+                if file.endswith(".png") or file.endswith(".jpg") or file.endswith(".jpeg"):
+                    full_path_to_file = os.path.join(root, file)
+                    shutil.copy(full_path_to_file, output_path)
 
     # copy input_path/pages folder to output_path/pages
     pages_path = os.path.join(output_path, "pages")
