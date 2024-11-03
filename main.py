@@ -11,6 +11,8 @@ import sys
 from typing import Dict, Optional
 import logging
 import configparser
+import json
+import cgi
 
 
 
@@ -169,6 +171,40 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(b"Pages rebuilt")
         else:
             super().do_GET()  
+    
+    def do_POST(self):
+        if self.path == "/submit-booking":
+            ctype, pdict = cgi.parse_header(self.headers.get('Content-Type'))
+            if ctype == 'multipart/form-data':
+                pdict['boundary'] = bytes(pdict['boundary'], "utf-8")
+                pdict['CONTENT-LENGTH'] = int(self.headers['Content-Length'])
+                form_data = cgi.parse_multipart(self.rfile, pdict)
+                
+                name = form_data.get('name')[0]
+                email = form_data.get('email')[0]
+                dates = form_data.get('dates')[0]
+                guests = form_data.get('guests')[0]
+                
+                # Process the form data as needed
+                print(f"Received booking request from {name} ({email}) for dates {dates} with {guests} guests.")
+                
+                # Send a JSON response
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                response = {
+                    'status': 'success',
+                    'message': 'Booking request received'
+                }
+                self.wfile.write(bytes(json.dumps(response), 'utf-8'))
+            else:
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b"Invalid form data")
+        else:
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(b"Not Found")
 
 def serve_output_html(output_path, md_path, file_ids, ip="localhost", port=80, config_path=None):
     server = GracefulServer(output_path, md_path, config_path, file_ids, ip, port)
