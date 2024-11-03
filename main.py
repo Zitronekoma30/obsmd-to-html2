@@ -13,7 +13,6 @@ import logging
 import configparser
 import json
 import cgi
-import yagmail
 
 
 # workaround global variables for HTTPRequestHandler
